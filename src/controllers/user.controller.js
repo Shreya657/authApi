@@ -8,6 +8,7 @@ import jwt from "jsonwebtoken"
 import validator from "validator"
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto"
+import { message } from "statuses";
 
 
 
@@ -411,4 +412,11 @@ const deleteAccount=asyncHandler(async(req,res)=>{
 })
 
 
-export {registerUser,loginUser,logoutUser,forgotPassword,resetPassword,getCurrentUser,refreshAccessToken,changeCurrentPassword,updateAccountDetails,deleteAccount}
+const msg=asyncHandler(async(req,res)=>{
+  return res
+  .status(200)
+  .json(new ApiResponse(200,{message: "your server is running smoothly......✅"},"done"))
+})
+
+
+export {registerUser,loginUser,logoutUser,forgotPassword,resetPassword,getCurrentUser,refreshAccessToken,changeCurrentPassword,updateAccountDetails,deleteAccount,msg}
