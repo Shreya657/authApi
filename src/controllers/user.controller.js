@@ -288,7 +288,7 @@ const getCurrentUser=asyncHandler(async(req,res)=>{
 
 const updateAccountDetails=asyncHandler(async(req,res)=>{
 
-  const {fullname,email}=req.body
+  const {username,email}=req.body
 
    if(!validator.isEmail(email)){
         throw new ApiError(400,"provide a valid email")
@@ -299,14 +299,14 @@ const updateAccountDetails=asyncHandler(async(req,res)=>{
     throw new ApiError(409, "Email is already in use by another account");
   }
 
-  if(!fullname || !email){
-    throw new ApiError(400,"all fields required")
+  if(!username || !email){
+    throw new ApiError(400,"username or email required")
   }
 
   const user= await User.findByIdAndUpdate(req.user?._id,
     {
       $set:{
-        fullname:fullname,
+        username:username,
         email:email
       }
 
@@ -388,4 +388,27 @@ const resetPassword=asyncHandler(async(req,res)=>{
 })
 
 
-export {registerUser,loginUser,logoutUser,forgotPassword,resetPassword,getCurrentUser}
+
+
+const deleteAccount=asyncHandler(async(req,res)=>{
+  const userId=req.user._id;  //id is a string not an obj
+  const user=await User.findById(userId);
+  if(!user){
+    throw new ApiError(404,"user not found");
+  }
+
+  const ans= await User.findByIdAndDelete(userId)
+  // console.log("deleted: ",ans);
+    res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200,{},"account has been deleted successfully from database"))
+
+
+})
+
+
+export {registerUser,loginUser,logoutUser,forgotPassword,resetPassword,getCurrentUser,refreshAccessToken,changeCurrentPassword,updateAccountDetails,deleteAccount}
