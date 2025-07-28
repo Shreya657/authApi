@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken"
 import validator from "validator"
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto"
-import { message } from "statuses";
+
 
 
 
@@ -415,7 +415,7 @@ const deleteAccount=asyncHandler(async(req,res)=>{
 const msg=asyncHandler(async(req,res)=>{
   return res
   .status(200)
-  .json(new ApiResponse(200,{message: "your server is running smoothly......✅"},"done"))
+  .json(new ApiResponse(200,{status: "UGMI"},"Im living for a thrillll......formula🫶"))
 })
 
 
