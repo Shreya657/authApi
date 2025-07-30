@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { changeCurrentPassword, deleteAccount, forgotPassword, getCurrentUser, loginUser, logoutUser, msg, refreshAccessToken, registerUser, resetPassword, updateAccountDetails} from "../controllers/user.controller.js";
+import { changeCurrentPassword, deleteAccount, forgotPassword, getCurrentUser, googleOAuth, loginUser, logoutUser, msg, refreshAccessToken, registerUser, resetPassword, updateAccountDetails} from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router=Router()
@@ -15,6 +15,7 @@ router.route("/change-password").put(verifyJWT,changeCurrentPassword)
 router.route("/update").patch(verifyJWT,updateAccountDetails)
 
 router.route("/delete").delete(verifyJWT,deleteAccount)
+router.route("/google",googleOAuth)
 router.route("/msg").get(msg)
 
 

@@ -8,6 +8,9 @@ import jwt from "jsonwebtoken"
 import validator from "validator"
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto"
+import { OAuth2Client } from "google-auth-library";
+
+const client=new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 
 
@@ -419,4 +422,42 @@ const msg=asyncHandler(async(req,res)=>{
 })
 
 
-export {registerUser,loginUser,logoutUser,forgotPassword,resetPassword,getCurrentUser,refreshAccessToken,changeCurrentPassword,updateAccountDetails,deleteAccount,msg}
+
+const googleOAuth=asyncHandler(async(req,res)=>{
+  const {idToken}=req.body;
+  if(!idToken){
+    throw new ApiError(400,"id token is required")
+  }
+const ticket=await client.verifyIdToken({idToken,
+  audience:process.env.GOOGLE_CLIENT_ID
+});
+
+const payload=ticket.getPayload();
+const{email,name,picture,sub}=payload
+if(!email){
+      throw new ApiError(400,"email not found in token")
+
+}
+
+let user=await User.findOne({email});
+if(!user){
+      user=await User.create({
+        name:name|| "no name",
+        email,
+        avatar:picture,
+        password:sub,
+        isGoogleAccount:true
+      });
+
+}
+
+const token=generateAccessAndRefreshTokens(user._id);
+
+return res
+.status(200)
+.json(new ApiResponse(200,user,"logged in successfully"))
+  
+})
+
+
+export {registerUser,loginUser,logoutUser,forgotPassword,resetPassword,getCurrentUser,refreshAccessToken,changeCurrentPassword,updateAccountDetails,deleteAccount,msg,googleOAuth}
