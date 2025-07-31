@@ -9,8 +9,9 @@ try {
     // 🔐 Token sources checked in this order:
     // *  1. Cookie: 'accessToken'
     // *  2. Header: 'Authorization: Bearer <token>'
-    const token= req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ","")
-    
+    // const token= req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ","")
+    const token = req.header("Authorization")?.replace("Bearer ", "") || req.cookies?.accessToken;
+
     if(!token){
         throw new ApiError(401,"unauthorized request");
     }
