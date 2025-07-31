@@ -23,10 +23,16 @@ const userSchema=new Schema({
         unique:true,
         trim:true
     },
-   
+
+   isGoogleAccount: {
+  type: Boolean,
+  default: false,
+},
     password:{
         type:String,
-        required:[true,'password is required']
+        required:function(){
+            return !this.isGoogleAccount
+        }
     },
     refreshToken:{
         type:String

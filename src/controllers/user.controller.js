@@ -12,7 +12,7 @@ import { OAuth2Client } from "google-auth-library";
 
 const client=new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
-
+//This creates a Google OAuth2 client which helps your backend verify the idToken sent by the frontend.
 
 
 
@@ -424,40 +424,54 @@ const msg=asyncHandler(async(req,res)=>{
 
 
 const googleOAuth=asyncHandler(async(req,res)=>{
+//  👇 Extracting the token sent from frontend (Google gives this after successful login)
   const {idToken}=req.body;
   if(!idToken){
     throw new ApiError(400,"id token is required")
   }
+
+  //   // ✅ Verifying that the token is real and was issued for your app
 const ticket=await client.verifyIdToken({idToken,
   audience:process.env.GOOGLE_CLIENT_ID
 });
 
-const payload=ticket.getPayload();
+const payload=ticket.getPayload(); // This extracts the user info from the token:
 const{email,name,picture,sub}=payload
 if(!email){
       throw new ApiError(400,"email not found in token")
 
 }
 
-let user=await User.findOne({email});
-if(!user){
+let user=await User.findOne({email});  //Check if this user already exists in your MongoDB.
+if(!user){  //if user not exist in db----do register them
       user=await User.create({
-        name:name|| "no name",
+        username:name|| "no name",
         email,
         avatar:picture,
-        password:sub,
-        isGoogleAccount:true
+        password:sub,        //  using Google's user ID (sub) as a placeholder password
+        isGoogleAccount:true  //marking this user as signed up via Google
       });
 
-}
+      // sub stands for subject — a unique ID Google assigns to every user.
+      //It’s not a password but works as a unique identifier.
+      //We use it only as a dummy password placeholder because your model requires one.
 
+}
+// // ✅ Generate access + refresh tokens
 const token=generateAccessAndRefreshTokens(user._id);
 
+
+//   ✅ Send success response
 return res
 .status(200)
-.json(new ApiResponse(200,user,"logged in successfully"))
+.json(new ApiResponse(200,{user,token},"logged in successfully via google"))
   
 })
+
+
+
+
+
 
 
 export {registerUser,loginUser,logoutUser,forgotPassword,resetPassword,getCurrentUser,refreshAccessToken,changeCurrentPassword,updateAccountDetails,deleteAccount,msg,googleOAuth}
