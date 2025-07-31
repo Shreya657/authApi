@@ -440,7 +440,7 @@ const msg=asyncHandler(async(req,res)=>{
 
 const googleOAuth=asyncHandler(async(req,res)=>{
 //  👇 Extracting the token sent from frontend (Google gives this after successful login)
-  const {idToken}=req.body;
+    const { idToken } = req.body;
   if(!idToken){
     throw new ApiError(400,"id token is required")
   }
@@ -462,7 +462,6 @@ if(!user){  //if user not exist in db----do register them
       user=await User.create({
         username:name|| "no name",
         email,
-        avatar:picture,
         password:sub,        //  using Google's user ID (sub) as a placeholder password
         isGoogleAccount:true  //marking this user as signed up via Google
       });
