@@ -15,7 +15,7 @@ router.route("/update").patch(verifyJWT,updateAccountDetails)
 router.route("/delete").delete(verifyJWT,deleteAccount)
 router.route("/msg").get(msg)
 
-router.route("/google").get(googleOAuth)
+router.route("/google").post(googleOAuth)
 
 
 
