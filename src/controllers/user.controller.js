@@ -472,18 +472,18 @@ if(!user){  //if user not exist in db----do register them
       //We use it only as a dummy password placeholder because your model requires one.
 
 }
-else{
-    user.isGoogleAccount = true;
-    await user.save();
+if (!user.isGoogleAcc) {
+  user.isGoogleAcc = true;
+  await user.save();
 }
 // // ✅ Generate access + refresh tokens
 const {accessToken,refreshToken}=generateAccessAndRefreshTokens(user._id);
-
+const userData=user.toObject();
 
 //   ✅ Send success response
 return res
 .status(200)
-.json(new ApiResponse(200,{user,accessToken,refreshToken},"logged in successfully via google"))
+.json(new ApiResponse(200,{user: userData,accessToken,refreshToken},"logged in successfully via google"))
   
 })
 
