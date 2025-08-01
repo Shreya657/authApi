@@ -472,13 +472,13 @@ if(!user){  //if user not exist in db----do register them
 
 }
 // // ✅ Generate access + refresh tokens
-const token=generateAccessAndRefreshTokens(user._id);
+const {accessToken,refreshToken}=generateAccessAndRefreshTokens(user._id);
 
 
 //   ✅ Send success response
 return res
 .status(200)
-.json(new ApiResponse(200,{user,token},"logged in successfully via google"))
+.json(new ApiResponse(200,{user,accessToken,refreshToken},"logged in successfully via google"))
   
 })
 
