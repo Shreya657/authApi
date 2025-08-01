@@ -472,6 +472,10 @@ if(!user){  //if user not exist in db----do register them
       //We use it only as a dummy password placeholder because your model requires one.
 
 }
+else{
+    user.isGoogleAccount = true;
+    await user.save();
+}
 // // ✅ Generate access + refresh tokens
 const {accessToken,refreshToken}=generateAccessAndRefreshTokens(user._id);
 
