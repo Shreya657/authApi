@@ -62,8 +62,15 @@ const registerUser=asyncHandler(async(req,res)=>{
      const user = await User.create({
     email,
     password,
-    username: username.toLowerCase()
+    username: username.toLowerCase(),
+    isEmailVerified:false
   });
+ const verificationToken=user.generateVerificationToken();
+ await user.save({validateBeforeSave:false});
+  const verificationURL=`${redirectUrl}?token=${verificationToken}`
+  const message = `Click the following link to verify your email:\n\n${verificationURL}`;
+  await sendEmail(user.email, "Verify your email", message);
+
 
     const createdUser=await User.findById(user._id).select("-password -refreshToken")
 
@@ -96,36 +103,36 @@ const {accessToken,refreshToken}=await generateAccessAndRefreshTokens(user._id)
 
 
 
-//  const verifyEmail = asyncHandler(async (req, res) => {
-//   const { token } = req.query;
+ const verifyEmail = asyncHandler(async (req, res) => {
+  const { token } = req.query;
 
-//   if (!token) {
-//     throw new ApiError(400, "Verification token is missing");
-//   }
+  if (!token) {
+    throw new ApiError(400, "Verification token is missing");
+  }
 
-//   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
-//   const user = await User.findOne({
+  const user = await User.findOne({
      
-//     emailVerificationToken: hashedToken,
-//     emailVerificationTokenExpiry: { $gt: Date.now() }, // token not expired
-//   });
-//     console.log("hashed: ",hashedToken)
-//     console.log("User found:", user);
-//   if (!user) {
-//     throw new ApiError(400, "Token is invalid or expired");
-//   }
+    emailVerificationToken: hashedToken,
+    emailVerificationExpiry: { $gt: Date.now() }, // token not expired
+  });
+    console.log("hashed: ",hashedToken)
+    console.log("User found:", user);
+  if (!user) {
+    throw new ApiError(400, "Token is invalid or expired");
+  }
 
-//   user.isEmailVerified = true;
-//   user.emailVerificationToken = undefined;
-//   user.emailVerificationExpiry = undefined;
+  user.isEmailVerified = true;
+  user.emailVerificationToken = undefined;
+  user.emailVerificationExpiry = undefined;
 
-//   await user.save({ validateBeforeSave: false });
+  await user.save({ validateBeforeSave: false });
 
-//   return res
-//     .status(200)
-//     .json(new ApiResponse(200, {}, "Email verified successfully ✅"));
-// });
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Email verified successfully ✅"));
+});
 
 
 
@@ -494,4 +501,4 @@ return res
 
 
 
-export {registerUser,loginUser,logoutUser,forgotPassword,resetPassword,getCurrentUser,refreshAccessToken,changeCurrentPassword,updateAccountDetails,deleteAccount,msg,googleOAuth}
+export {registerUser,loginUser,logoutUser,forgotPassword,resetPassword,getCurrentUser,refreshAccessToken,changeCurrentPassword,updateAccountDetails,deleteAccount,msg,googleOAuth,verifyEmail}

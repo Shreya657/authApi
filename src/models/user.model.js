@@ -45,16 +45,16 @@ const userSchema=new Schema({
    resetPasswordExpiry: { 
     type:Date
     },
-    // emailVerificationToken:{
-    //     type:String
-    // },
-    // emailVerificationExpiry:{
-    //     type:Date
-    // },
-    // isEmailVerified:{
-    //     type:Boolean,
-    //     default:false
-    // }
+    emailVerificationToken:{
+        type:String
+    },
+    emailVerificationExpiry:{
+        type:Date
+    },
+    isEmailVerified:{
+        type:Boolean,
+        default:false
+    }
 
 },{timestamps:true})
 
@@ -109,15 +109,15 @@ userSchema.methods.generatePasswordResetToken=function(){
     return resetToken;
 }
 
-// userSchema.methods.generateVerificationToken=function(){
-//     const verificationToken=crypto.randomBytes(32).toString("hex");
-//     const emailHashedToken=crypto.createHash("sha256").update(verificationToken).digest("hex");
+userSchema.methods.generateVerificationToken=function(){
+    const verificationToken=crypto.randomBytes(32).toString("hex");
+    const emailHashedToken=crypto.createHash("sha256").update(verificationToken).digest("hex");
 
-//     this.emailVerificationToken=emailHashedToken;
-//     this.emailVerificationExpiry=Date.now()+24*60*60*1000;  // 24 hrs
+    this.emailVerificationToken=emailHashedToken;
+    this.emailVerificationExpiry=Date.now()+24*60*60*1000;  // 24 hrs
 
-//     return verificationToken;
-// }
+    return verificationToken;
+}
 
 
 

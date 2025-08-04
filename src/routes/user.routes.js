@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { changeCurrentPassword, deleteAccount, forgotPassword, getCurrentUser,  googleOAuth, loginUser, logoutUser, msg, refreshAccessToken, registerUser, resetPassword, updateAccountDetails} from "../controllers/user.controller.js";
+import { changeCurrentPassword, deleteAccount, forgotPassword, getCurrentUser,  googleOAuth, loginUser, logoutUser, msg, refreshAccessToken, registerUser, resetPassword, updateAccountDetails, verifyEmail} from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router=Router()
 router.route("/register").post(registerUser);
+router.route("/verify-email").get(verifyEmail);
 router.route("/login").post(loginUser)
 router.route("/logout").post(verifyJWT,logoutUser)
 router.route("/forgot-password").post(forgotPassword)
