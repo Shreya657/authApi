@@ -104,7 +104,7 @@ const {accessToken,refreshToken}=await generateAccessAndRefreshTokens(user._id)
 
 
  const verifyEmail = asyncHandler(async (req, res) => {
-  const { token } = req.query;
+   const {token}=req.params;
 
   if (!token) {
     throw new ApiError(400, "Verification token is missing");
