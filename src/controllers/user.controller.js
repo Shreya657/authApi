@@ -67,7 +67,7 @@ const registerUser=asyncHandler(async(req,res)=>{
   });
  const verificationToken=user.generateVerificationToken();
  await user.save({validateBeforeSave:false});
-  const verificationURL=`${redirectUrl}?token=${verificationToken}`
+  const verificationURL=`${redirectUrl}/verify-email/${verificationToken}`
   const message = `Click the following link to verify your email:\n\n${verificationURL}`;
   await sendEmail(user.email, "Verify your email", message);
 
