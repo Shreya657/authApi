@@ -144,6 +144,7 @@ const loginUser=asyncHandler(async(req,res)=>{
     if((!username && !email) ||!password){
         throw new ApiError(400,"username or email & password is required")
     }
+    
 
  
 
@@ -154,6 +155,9 @@ const loginUser=asyncHandler(async(req,res)=>{
     if(!user){
   throw new ApiError(404,"user not found");
 }
+ if (!user.isEmailVerified) {
+    throw new ApiError(401, "Please verify your email before logging in");
+  }
 
 const isPasswordValid=await user.isPasswordCorrect(password);
 if(!isPasswordValid){
