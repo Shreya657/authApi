@@ -14,7 +14,7 @@ export const sendEmail = async (to, subject, html) => {
     });
 
     const mailOptions = {
-      from: `"Your App Name" <${process.env.SMTP_FROM_EMAIL}>`,
+      from: `"From AuthApp Team" <${process.env.SMTP_FROM_EMAIL}>`,
       to: to,
       subject: subject,
       html: html,
