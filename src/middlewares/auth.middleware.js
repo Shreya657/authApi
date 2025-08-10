@@ -4,8 +4,9 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken"
 
 export const verifyJWT= asyncHandler(async(req, _,next)=>{
+    //verifyJWT validates the access token on every protected request.
 try {
-
+// it is searching for the access token ✅
     // 🔐 Token sources checked in this order:
     // *  1. Cookie: 'accessToken'
     // *  2. Header: 'Authorization: Bearer <token>'

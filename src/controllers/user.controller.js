@@ -90,7 +90,7 @@ const {accessToken,refreshToken}=await generateAccessAndRefreshTokens(user._id)
     return res
     .status(200)
     .cookie("accessToken",accessToken,options)
-.cookie("refreshToken",refreshToken,options)
+    .cookie("refreshToken",refreshToken,options)
     .json(new ApiResponse(200,  {
         user: createdUser,
         accessToken,
@@ -167,6 +167,13 @@ if(!isPasswordValid){
 
 const {accessToken,refreshToken}=await generateAccessAndRefreshTokens(user._id)
 
+
+//findById() is a static method on the User model — used to query the database.
+
+// The user variable already contains one document; it doesn't have query methods like findById() because it’s a single record.
+//User: 	Mongoose Model (class)
+//user:   Mongoose Document (one user instance)
+
 const loggedInUser=await User.findById(user._id).select("-password -refreshToken")
 
 const options={
@@ -216,6 +223,7 @@ return res
 })
 
 const refreshAccessToken=asyncHandler(async(req,res)=>{
+  //it is generating new access and refreshtoken by checking the refreshtoken u give in client side with once stored refresh token in db
 const incomingRefreshToken= req.cookies.refreshToken || req.body.refreshToken;  
  //✅ Looks for refreshToken:
 // First in cookies
@@ -311,7 +319,10 @@ if(!user){
 })
 
 const getCurrentUser=asyncHandler(async(req,res)=>{
-   const user = await User.findById(req.user._id);
+   const user = await User.findById(req.user._id).select("-password -refreshToken");;
+   if(!user){
+    throw new ApiError(404,"user not found");
+   }
   return res
   .status(200)
   .json(new ApiResponse(200,user,"current user fetched successful"));
@@ -327,7 +338,7 @@ const updateAccountDetails=asyncHandler(async(req,res)=>{
     }
 
   const ExistingEmail=await User.findOne({email});
-  if(!ExistingEmail&& ExistingEmail._id.toString()==req.user._id.toString()){
+  if(ExistingEmail&& ExistingEmail._id.toString()!=req.user._id.toString()){
     throw new ApiError(409, "Email is already in use by another account");
   }
 
@@ -484,17 +495,23 @@ if(!user){  //if user not exist in db----do register them
       //We use it only as a dummy password placeholder because your model requires one.
 
 }
-if (!user.isGoogleAcc) {
+else if (!user.isGoogleAcc) {
   user.isGoogleAcc = true;
   await user.save();
 }
 // // ✅ Generate access + refresh tokens
-const {accessToken,refreshToken}=generateAccessAndRefreshTokens(user._id);
-const userData=user.toObject();
+const {accessToken,refreshToken}= await generateAccessAndRefreshTokens(user._id);
+ const options = {
+    httpOnly: true,
+    secure: true
+  };
+const userData=await User.findById(user._id).select("-password -refreshToken");
 
 //   ✅ Send success response
 return res
 .status(200)
+  .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
 .json(new ApiResponse(200,{user: userData,accessToken,refreshToken},"logged in successfully via google"))
   
 })
