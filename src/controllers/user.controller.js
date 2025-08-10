@@ -489,7 +489,7 @@ if(!user){  //if user not exist in db----do register them
         username:name|| "no name",
         email,
         password:sub, 
-        picture,       //  using Google's user ID (sub) as a placeholder password
+            //  using Google's user ID (sub) as a placeholder password
         isGoogleAccount:true  //marking this user as signed up via Google
       });
 
