@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { changeCurrentPassword, deleteAccount, forgotPassword, getCurrentUser,  googleOAuth, loginUser, logoutUser, msg, refreshAccessToken, registerUser, resetPassword, updateAccountDetails, verifyEmail} from "../controllers/user.controller.js";
+import { changeCurrentPassword, connectGoogle, deleteAccount, forgotPassword, getCurrentUser,  googleOAuth, googleOAuthFull, loginUser, logoutUser, msg, refreshAccessToken, registerUser, resetPassword, updateAccountDetails, verifyEmail} from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router=Router()
@@ -17,6 +17,8 @@ router.route("/delete").delete(verifyJWT,deleteAccount)
 router.route("/msg").get(msg)
 
 router.route("/google").post(googleOAuth)
+
+
 
 
 

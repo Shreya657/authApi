@@ -16,6 +16,8 @@ const client=new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 
 
+
+
 const generateAccessAndRefreshTokens = async(userId)=>{
   try{
     const user= await User.findById(userId); //fetch user from db by id
@@ -486,7 +488,8 @@ if(!user){  //if user not exist in db----do register them
       user=await User.create({
         username:name|| "no name",
         email,
-        password:sub,        //  using Google's user ID (sub) as a placeholder password
+        password:sub, 
+        picture,       //  using Google's user ID (sub) as a placeholder password
         isGoogleAccount:true  //marking this user as signed up via Google
       });
 
@@ -518,6 +521,7 @@ return res
 
 
 
+ 
 
 
 
