@@ -54,7 +54,8 @@ const userSchema=new Schema({
     isEmailVerified:{
         type:Boolean,
         default:false
-    }
+    },
+     picture: { type: String }, 
 
 },{timestamps:true})
 
